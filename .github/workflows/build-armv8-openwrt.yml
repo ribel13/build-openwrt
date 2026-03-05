@@ -55,7 +55,7 @@ on:
       kernel_repo:
         description: '选择内核存储库'
         required: false
-        default: 'ribel13/kernel'
+        default: 'ophub/kernel'
         type: choice
         options: [ophub/kernel, ribel13/kernel]
 
