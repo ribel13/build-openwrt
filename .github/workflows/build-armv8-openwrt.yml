@@ -195,7 +195,8 @@ jobs:
 
       - name: Packaging OpenWrt
         if: steps.compile.conclusion == 'success'
-        uses: ophub/amlogic-s9xxx-openwrt@main
+        # uses: ophub/amlogic-s9xxx-openwrt@main
+        uses: haiibo/flippy-openwrt-actions@main
         env:
           OPENWRT_ARMSR: openwrt/bin/targets/*/*/*rootfs.tar.gz
           PACKAGE_SOC: ${{inputs.openwrt_board}}
