@@ -33,9 +33,9 @@ on:
       source:
         description: '选择要编译的源码'
         required: true
-        default: 'immwrt'
+        default: 'openwrt'
         type: choice
-        options: ['immwrt', 'lean']
+        options: ['immwrt', 'openwrt', 'lean']
 
       ip_address:
         description: '设置默认IP地址'
