@@ -40,12 +40,12 @@ on:
       ip_address:
         description: '设置默认IP地址'
         required: false
-        default: '10.0.0.2'
+        default: '192.168.1.1'
 
       openwrt_board:
         description: '选择设备(CPU)型号'
         required: true
-        default: 's905d_s905x3'
+        default: 's905x'
 
       openwrt_kernel:
         description: '设置内核版本'
@@ -55,9 +55,9 @@ on:
       kernel_repo:
         description: '选择内核存储库'
         required: false
-        default: 'ophub/kernel'
+        default: 'ribel13/kernel'
         type: choice
-        options: [ophub/kernel, breakingbadboy/OpenWrt]
+        options: [ophub/kernel, ribel13/kernel]
 
       toolchain:
         description: '使用toolchain缓存'
@@ -160,7 +160,7 @@ jobs:
         if: steps.toolchain.conclusion == 'success' || env.OUTPUT_RELEASE == 'true'
         uses: mknejp/delete-release-assets@v1
         with:
-          token: ${{secrets.GITHUB_TOKEN}}
+          token: ${{secrets.AKSI_TOKEN}}
           tag: toolchain-cache
           assets: '${{env.SOURCE_REPO}}-${{env.LITE_BRANCH}}-${{env.DEVICE_TARGET}}*'
           fail-if-no-assets: false
@@ -172,7 +172,7 @@ jobs:
         with:
           name: toolchain-cache
           tag_name: toolchain-cache
-          token: ${{secrets.GITHUB_TOKEN}}
+          token: ${{secrets.AKSI_TOKEN}}
           files: output/*
           body: OpenWrt 工具链缓存
 
@@ -195,7 +195,7 @@ jobs:
 
       - name: Packaging OpenWrt
         if: steps.compile.conclusion == 'success'
-        uses: haiibo/flippy-openwrt-actions@main
+        uses: ophub/amlogic-s9xxx-openwrt@main
         env:
           OPENWRT_ARMSR: openwrt/bin/targets/*/*/*rootfs.tar.gz
           PACKAGE_SOC: ${{inputs.openwrt_board}}
@@ -218,7 +218,7 @@ jobs:
           sleep 3s && rm -rf packages u-boot-qemu* sha256sums *.buildinfo *.bin
           echo "FIRMWARE_PATH=$PWD" >> $GITHUB_ENV
           cd $PACKAGED_OUTPUTPATH && rm -f *rootfs.tar.gz *.sha
-          if [[ $SOURCE_REPO == 'immortalwrt' ]]; then
+          if [[ $SOURCE_REPO == 'openwrt' ]]; then
             rename 's/openwrt/${{env.SOURCE_REPO}}/' *
           fi
 
@@ -237,7 +237,7 @@ jobs:
           allowUpdates: true
           removeArtifacts: true
           tag: ${{env.RELEASE_TAG}}
-          token: ${{secrets.GITHUB_TOKEN}}
+          token: ${{secrets.AKSI_TOKEN}}
           artifacts: ${{env.FIRMWARE_PATH}}/*,${{env.PACKAGED_OUTPUTPATH}}/*
           body: |
             **This is ${{env.SOURCE_REPO}} firmware for ${{env.DEVICE_TARGET}}**
